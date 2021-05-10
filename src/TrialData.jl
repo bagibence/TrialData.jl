@@ -51,7 +51,12 @@ export
     remove_low_firing_neurons,
 
     add_norm!,
-    add_norm
+    add_norm,
+
+    nanmin,
+    nanmax,
+    nanmean,
+    nanmedian
 
 
 include("constants.jl")
@@ -62,5 +67,6 @@ include("data_transformations.jl")
 include("time.jl")
 include("firing_rates.jl")
 include("signals.jl")
+include("nanfunctions.jl")
 
 end # module
