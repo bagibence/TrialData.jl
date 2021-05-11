@@ -66,7 +66,16 @@ function add_firing_rates(df, method; win=nothing, hw=nothing, std=nothing)
         out_df = _add_rates!(out_df, spike_fields, rate_fields, bin_size,
                              arr -> (arr./ bin_size))
     elseif method == :smooth
-            win = norm_gaussian_window(bin_size; hw)
+        if win != nothing
+            @assert (hw == nothing) && (std == nothing)
+        elseif std != nothing
+            @assert hw == nothing
+            win = norm_gauss_window(bin_size, std)
+        elseif hw != nothing
+            win = norm_gauss_window(bin_size; hw=hw)
+        else
+            win = norm_gauss_window(bin_size)
+        end
 
         out_df = _add_rates!(out_df, spike_fields, rate_fields, bin_size,
                              arr -> smooth_spikes(arr, win))

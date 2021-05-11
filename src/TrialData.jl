@@ -23,7 +23,7 @@ export
 
     norm_gauss_window,
     smooth_spikes,
-    smooth_signals!,
+    smooth_signals,
     
     concat_trials,
     get_sig_by_trial,
@@ -49,6 +49,7 @@ export
 
     get_average_firing_rates,
     remove_low_firing_neurons,
+    add_firing_rates,
 
     add_norm!,
     add_norm,
