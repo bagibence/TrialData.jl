@@ -28,13 +28,34 @@ function get_average_firing_rates(df, signal)
 end
 
 
+function _spikes_and_rates_fields(df, signal)
+    ssignal = String(signal)
+    if endswith(ssignal, "spikes")
+        sother = replace(ssignal, "spikes" => "rates")
+    elseif endswith(ssignal, "rates")
+        sother = replace(ssignal, "rates" => "spikes")
+    else
+        @warn "Could not find spikes/rates counterpart of $(ssignal)"
+        return [ssignal]
+    end
+
+    if sother in names(df)
+        return [ssignal, sother]
+    else
+        return [ssignal]
+    end
+end
+
+
 function remove_low_firing_neurons(df, signal, threshold, divide_by_bin_size)
     out_df = copy(df)
 
     av_rates = get_average_firing_rates(df, signal, divide_by_bin_size)
     mask = vec(av_rates .> threshold)
 
-    out_df[!, signal] = [arr[:, mask] for arr in df[!, signal]]
+    for sig in _spikes_and_rates_fields(out_df, signal)
+        out_df[!, sig] = [arr[:, mask] for arr in df[!, sig]]
+    end
 
     return out_df
  end
