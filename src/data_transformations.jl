@@ -80,6 +80,13 @@ function sqrt_transform(df, fieldname)
 end
 
 
+"""
+    transform_signal(df, signal, trafo::Function)
+    transform_signal(df, signals, trafo)
+    transform_signal(df, signals, trafos)
+
+Apply transformation(s) to signal(s)
+"""
 function transform_signal(df, signal::T, trafo::Function) where T <: Union{AbstractString, Symbol}
     # TODO handle optional keyword arguments?
     out_df = copy(df)

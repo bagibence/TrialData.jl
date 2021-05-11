@@ -37,6 +37,7 @@ export
     subtract_cross_condition_mean,
     trial_average,
 
+    transform_signal,
     center,
     z_score,
     center_normalize,
