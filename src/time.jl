@@ -94,10 +94,11 @@ function restrict_to_interval(df, epoch, ref_field)
 
     # convert every index column to allow inserting a missing value
     for col in idx_fields
-        dtypes = typeof.(df[!, col])
+        dtypes = unique(typeof.(out_df[!, col]))
         dtypes = [t for t in dtypes if t != Missing]
         if length(dtypes) == 1
-            df[!, col] = convert(Array{Union{Missing, dtypes[1]}}, df[!, col])
+            out_df[!, col] = convert(Array{Union{Missing, dtypes[1]}},
+                                     out_df[!, col])
         end
     end
 
