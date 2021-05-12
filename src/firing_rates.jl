@@ -2,9 +2,9 @@ function get_average_firing_rates(df, signal, divide_by_bin_size)
     @assert length(unique(df.bin_size)) == 1
 
     if divide_by_bin_size
-        return mean(concat_trials(df, signal), dims=1) / df.bin_size[1]
+        return vec(mean(concat_trials(df, signal), dims=1) / df.bin_size[1])
     else
-        return mean(concat_trials(df, signal), dims=1)
+        return vec(mean(concat_trials(df, signal), dims=1))
     end
 end
 
@@ -51,7 +51,7 @@ function remove_low_firing_neurons(df, signal, threshold, divide_by_bin_size)
     out_df = copy(df)
 
     av_rates = get_average_firing_rates(df, signal, divide_by_bin_size)
-    mask = vec(av_rates .> threshold)
+    mask = av_rates .> threshold
 
     for sig in _spikes_and_rates_fields(out_df, signal)
         out_df[!, sig] = [arr[:, mask] for arr in df[!, sig]]
