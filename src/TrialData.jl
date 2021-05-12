@@ -1,6 +1,6 @@
 module TrialData
 
-using Statistics
+using Statistics: mean, median, var, std
 using DataFrames
 using DataFramesMeta
 
@@ -13,6 +13,8 @@ pd = pyimport("pandas");
 using DSP: gaussian, conv
 
 using LinearAlgebra: norm
+
+using PyCall: PyObject
 
 export
     mat2df,
@@ -58,8 +60,10 @@ export
     nanmin,
     nanmax,
     nanmean,
-    nanmedian
+    nanmedian,
 
+    fit,
+    dim_reduce
 
 include("constants.jl")
 include("io.jl")
@@ -70,5 +74,6 @@ include("time.jl")
 include("firing_rates.jl")
 include("signals.jl")
 include("nanfunctions.jl")
+include("dim_reduction.jl")
 
 end # module
