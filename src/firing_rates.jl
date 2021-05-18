@@ -67,7 +67,7 @@ function remove_low_firing_neurons(df, signal, threshold, divide_by_bin_size)
 end
 
 
-function _add_rates!(df, spike_fields, rate_fields, bin_size, f)
+function _add_rates!(df, spike_fields, rate_fields, f)
     for (spike_col, rate_col) in zip(spike_fields, rate_fields)
         df[!, rate_col] = [f(arr) for arr in df[!, spike_col]]
     end
@@ -84,21 +84,21 @@ function add_firing_rates(df, method; win=nothing, hw=nothing, std=nothing)
     bin_size = out_df.bin_size[1]
 
     if method == :bin
-        out_df = _add_rates!(out_df, spike_fields, rate_fields, bin_size,
+        out_df = _add_rates!(out_df, spike_fields, rate_fields,
                              arr -> (arr./ bin_size))
     elseif method == :smooth
-        if win != nothing
-            @assert (hw == nothing) && (std == nothing)
-        elseif std != nothing
-            @assert hw == nothing
+        if win !== nothing
+            @assert (hw === nothing) && (std === nothing)
+        elseif std !== nothing
+            @assert hw === nothing
             win = norm_gauss_window(bin_size, std)
-        elseif hw != nothing
+        elseif hw !== nothing
             win = norm_gauss_window(bin_size; hw=hw)
         else
             win = norm_gauss_window(bin_size)
         end
 
-        out_df = _add_rates!(out_df, spike_fields, rate_fields, bin_size,
+        out_df = _add_rates!(out_df, spike_fields, rate_fields,
                              arr -> smooth_spikes(arr, win))
 
     else
