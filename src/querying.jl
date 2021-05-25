@@ -48,3 +48,9 @@ merge_fields = merge_signals
 function get_sig(df, signals...)
     return hcat([concat_trials(df, sig) for sig in signals]...)
 end
+
+
+function stack_trials(df, field)
+    return hcat(df[:, field]...)'
+end
+

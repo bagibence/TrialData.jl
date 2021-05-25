@@ -32,6 +32,7 @@ export
     merge_signals,
     merge_fields,
     get_sig,
+    stack_trials,
 
     select_trials,
     @select_trials,
