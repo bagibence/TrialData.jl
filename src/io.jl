@@ -127,6 +127,8 @@ end
 Convert a Julia DataFrame to a pd.DataFrame because seaborn can only handle pandas DataFrames
 """
 function to_pandas(df)
-    return pd.DataFrame(eachcol(df)).T.rename(columns = Dict(zip(0:length(names(df))-1,
+    # this works for now but might want to create a global variable for pd like the docs say
+    pd = pyimport("pandas")
+    return pd.DataFrame(Matrix(df)).T.rename(columns = Dict(zip(0:length(names(df))-1,
                                                                  names(df))));
 end

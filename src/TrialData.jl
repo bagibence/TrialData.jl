@@ -8,13 +8,11 @@ using HDF5: h5open
 using MAT: matopen
 
 using PyCall: pyimport
-pd = pyimport("pandas");
 
 using DSP: gaussian, conv
 
 using LinearAlgebra: norm
 
-using PyCall: PyObject
 
 export
     mat2df,
