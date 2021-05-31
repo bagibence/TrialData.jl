@@ -54,3 +54,7 @@ function stack_trials(df, field)
     return hcat(df[:, field]...)'
 end
 
+
+function stack_time_average(df, field)
+    return vcat([mean(arr, dims=1) for arr in df[:, field]]...)
+end

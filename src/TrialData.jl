@@ -33,6 +33,7 @@ export
     merge_fields,
     get_sig,
     stack_trials,
+    stack_time_average,
 
     select_trials,
     @select_trials,
