@@ -36,7 +36,6 @@ export
     stack_time_average,
 
     select_trials,
-    @select_trials,
     rename_fields,
     subtract_cross_condition_mean,
     trial_average,

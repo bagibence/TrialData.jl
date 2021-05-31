@@ -2,17 +2,6 @@ function select_trials(df, query::Function)
     return filter(query, df)
 end
 
-function select_trials(df, query::Expr)
-    source, fun = DataFramesMeta.get_source_fun(query)
-
-    eval(:($df[DataFramesMeta.df_to_bool($fun($df[!, $source])), :]))
-end
-
-macro select_trials(df, query::Expr)
-    source, fun = DataFramesMeta.get_source_fun(query)
-
-    :($df[DataFramesMeta.df_to_bool($fun($df[!, $source])), :])
-end
 
 function select_trials(df, indices::AbstractVector)
     return df[indices, :]
