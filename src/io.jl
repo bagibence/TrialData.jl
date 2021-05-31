@@ -123,8 +123,9 @@ end
 
 """
     to_pandas(df)
+    to_pandas(arr::DimArray)
 
-Convert a Julia DataFrame to a pd.DataFrame because seaborn can only handle pandas DataFrames
+Convert a DataFrame or DimArray to a pd.DataFrame because seaborn can only handle pandas DataFrames
 """
 function to_pandas(df)
     # this works for now but might want to create a global variable for pd like the docs say
@@ -132,3 +133,19 @@ function to_pandas(df)
     return pd.DataFrame(Matrix(df)).T.rename(columns = Dict(zip(0:length(names(df))-1,
                                                                  names(df))));
 end
+
+function to_pandas(arr::DimArray)
+    return to_xarray(arr).to_pandas()
+end
+
+"""
+    to_xarray(K::DimArray)
+
+Convert a DimensionalData.DimArray to an xr.DataArray (mostly for plotting).
+"""
+function to_xarray(K::DimArray)
+    xr = pyimport("xarray");
+    return xr.DataArray(parent(K),
+                        dims = name.(K.dims),
+                        coords = Dict(name(dim) => val(dim) for dim in K.dims))
+end;

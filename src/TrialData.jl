@@ -7,17 +7,19 @@ using DataFramesMeta
 using HDF5: h5open
 using MAT: matopen
 
-using PyCall: pyimport
+using PyCall: pyimport, PyObject
 
 using DSP: gaussian, conv
 
 using LinearAlgebra: norm
 
+using DimensionalData
 
 export
     mat2df,
     hdf2df,
     to_pandas,
+    to_xarray,
     to_int,
     clean_idx_fields,
 
