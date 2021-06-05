@@ -130,7 +130,7 @@ Convert a DataFrame or DimArray to a pd.DataFrame because seaborn can only handl
 function to_pandas(df)
     # this works for now but might want to create a global variable for pd like the docs say
     pd = pyimport("pandas")
-    return pd.DataFrame(Matrix(df)).T.rename(columns = Dict(zip(0:length(names(df))-1,
+    return pd.DataFrame(Matrix(df)).rename(columns = Dict(zip(0:length(names(df))-1,
                                                                  names(df))));
 end
 
