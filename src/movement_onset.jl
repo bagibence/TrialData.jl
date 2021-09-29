@@ -49,6 +49,18 @@ function get_movement_onset(trial, exec_idx)
     return exec_idx[1] + rel_on_idx - 1
 end
 
+function get_movement_onset(trial; kwargs...)
+    return get_movement_onset(trial.vel_norm[trial.idx_go_cue:end]; kwargs...) + trial.idx_go_cue
+end
+
+function add_movement_onset(df; kwargs...)
+    outdf = deepcopy(df)
+
+    outdf[!, :idx_movement_on] = [get_movement_onset(trial; kwargs...) for trial in eachrow(outdf)]
+
+    return outdf
+end
+
 
 function get_movement_peak(trial, exec_idx)
     s = [norm(veli) for veli in eachrow(trial.vel[exec_idx, :])];

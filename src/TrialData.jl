@@ -80,6 +80,8 @@ export
     twonn_dimension,
 
     get_movement_onset,
+    get_movement_peak,
+    add_movement_onset,
 
     get_classif_cv_scores_through_time,
     get_regr_cv_scores_through_time,
