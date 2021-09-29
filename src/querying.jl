@@ -1,11 +1,11 @@
-function select_trials(df, query::Function)
-    return filter(query, df)
-end
+#function select_trials(df, query::Function)
+#    return filter(query, df)
+#end
 
 
-function select_trials(df, indices::AbstractVector)
-    return df[indices, :]
-end
+#function select_trials(df, indices::AbstractVector)
+#    return df[indices, :]
+#end
 
 
 """
