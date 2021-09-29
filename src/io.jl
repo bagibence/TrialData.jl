@@ -74,11 +74,13 @@ end
 
 """
     mat2df(filename)
+    mat2df(filename, fieldname)
 
-Read a data set saved in a .MAT file and turn fields starting with "idx" to integers.
+Read a data set saved in a .MAT file's fieldname variable and turn fields starting with "idx" to integers.
+If fieldname is not given, it is assumed that only one variable is saved in the .MAT file.
 """
-function mat2df(filename)
-    trial_data = read(matopen(filename), "trial_data")
+function mat2df(filename, fieldname)
+    trial_data = read(matopen(filename), fieldname)
 
     cleaned_data = Dict()
     for key in keys(trial_data)
@@ -86,6 +88,13 @@ function mat2df(filename)
     end
 
     return cleaned_data |> DataFrame |> clean_idx_fields! |> replace_nans! |> clean_types!
+end
+
+function mat2df(filename)
+    data = matopen(filename)
+    fieldnames = names(data)
+    @assert length(fieldnames) == 1
+    return mat2df(filename, first(fieldnames))
 end
 
 
