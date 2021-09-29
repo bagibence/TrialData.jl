@@ -24,7 +24,7 @@ function get_sig_by_trial(df, signal)
 end
 
 function merge_signals(df, signals, out_fieldname)
-    out_df = copy(df)
+    out_df = deepcopy(df)
 
     out_df[!, out_fieldname] = [hcat(trial[signals]...) for trial in eachrow(df)]
 

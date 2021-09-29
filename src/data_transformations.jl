@@ -89,14 +89,14 @@ Apply transformation(s) to signal(s)
 """
 function transform_signal(df, signal::T, trafo::Function) where T <: Union{AbstractString, Symbol}
     # TODO handle optional keyword arguments?
-    out_df = copy(df)
+    out_df = deepcopy(df)
     out_df[!, signal] = trafo(out_df, signal)
     
     return out_df
 end
 
 function transform_signal(df, signals, trafo::Function)
-    out_df = copy(df)
+    out_df = deepcopy(df)
     for signal in signals
         out_df[!, signal] = trafo(out_df, signal)
     end
@@ -105,7 +105,7 @@ function transform_signal(df, signals, trafo::Function)
 end
 
 function transform_signal(df, signals, trafos)
-    out_df = copy(df)
+    out_df = deepcopy(df)
 
     for signal in signals
         for trafo in trafos

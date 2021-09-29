@@ -4,7 +4,7 @@ end
 
 
 function dim_reduce(df::AbstractDataFrame, model::PyObject, signal, outsignal)
-    outdf = copy(df)
+    outdf = deepcopy(df)
 
     model = fit(outdf, model, signal)
     outdf[!, outsignal] = [model.transform(arr) for arr in outdf[!, signal]]

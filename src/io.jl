@@ -32,7 +32,7 @@ Turn fields of the the dataframe that start with "idx" to integers
 and return a copy of the dataframe.
 """
 function clean_idx_fields(df)
-    outdf = copy(df)
+    outdf = deepcopy(df)
     return clean_idx_fields!(outdf)
 end
 
@@ -56,8 +56,8 @@ function clean_types!(df)
 end
 
 function clean_types(df)
-    outdf = copy(df)
-    return clean_types!(df)
+    outdf = deepcopy(df)
+    return clean_types!(outdf)
 end
 
 function replace_nans!(df)

@@ -5,7 +5,7 @@ function add_norm!(df, signal)
 end
 
 function add_norm(df, signal)
-    out_df = copy(df)
+    out_df = deepcopy(df)
     add_norm!(out_df, signal)
     return out_df
 end
@@ -45,7 +45,7 @@ end
 
 
 function subtract_cross_condition_mean(df, ref_field)
-    out_df = copy(df)
+    out_df = deepcopy(df)
     
     for col in time_varying_fields(out_df, ref_field)
         mean_act = mean(out_df[!, col])

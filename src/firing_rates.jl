@@ -48,7 +48,7 @@ end
 
 
 function remove_low_firing_neurons(df, signal, threshold, divide_by_bin_size)
-    out_df = copy(df)
+    out_df = deepcopy(df)
 
     av_rates = get_average_firing_rates(df, signal, divide_by_bin_size)
     mask = av_rates .> threshold
@@ -76,7 +76,7 @@ function _add_rates!(df, spike_fields, rate_fields, f)
 end
 
 function add_firing_rates(df, method; win=nothing, hw=nothing, std=nothing)
-    out_df = copy(df)
+    out_df = deepcopy(df)
 
     spike_fields = [col for col in names(out_df) if endswith(col, "spikes")]
     rate_fields = [replace(col, "spikes" => "rates") for col in spike_fields]

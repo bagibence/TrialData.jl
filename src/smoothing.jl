@@ -59,7 +59,7 @@ end
     smooth_signals(df, signals, hw::Number=DEFAULT_HW)
 """
 function smooth_signals(df, sig::T, win::AbstractVector) where T <: Union{String, Symbol}
-    outdf = copy(df)
+    outdf = deepcopy(df)
 
     outdf[!, sig] = [smooth_spikes(arr, win) for arr in outdf[!, sig]]
 
@@ -67,7 +67,7 @@ function smooth_signals(df, sig::T, win::AbstractVector) where T <: Union{String
 end
 
 function smooth_signals(df, signals, win::AbstractVector)
-    outdf = copy(df)
+    outdf = deepcopy(df)
 
     for sig in signals
         outdf[!, sig] = [smooth_spikes(arr, win) for arr in outdf[!, sig]]
