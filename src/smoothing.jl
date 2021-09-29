@@ -43,7 +43,8 @@ function smooth_spikes(neuron_spikes::AbstractVector, bin_size, hw=DEFAULT_HW)
 end
 
 function smooth_spikes(pop_spikes::AbstractMatrix, win::AbstractVector)
-    return hcat((smooth_spikes(neuron_spikes, win) for neuron_spikes in eachcol(pop_spikes))...)
+    hw = floor(length(win) / 2) |> Int
+    return conv(pop_spikes, win)[hw+1:end-hw, :]
 end
 
 function smooth_spikes(pop_spikes::AbstractMatrix, bin_size, hw=DEFAULT_HW)
