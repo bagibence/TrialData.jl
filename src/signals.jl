@@ -1,13 +1,22 @@
+function add_norm!(df, signal, out_field)
+    df[!, out_field] = [norm.(eachrow(arr)) for arr in df[!, signal]]
+end
+
 function add_norm!(df, signal)
     norm_field = Symbol(Symbol(signal), :_norm)
     
-    df[!, norm_field] = [norm.(eachrow(arr)) for arr in df[!, signal]]
+    add_norm!(df, signal, norm_field)
+end
+
+function add_norm(df, signal, out_field)
+    out_df = deepcopy(df)
+    add_norm!(out_df, signal, out_field)
+    return out_df
 end
 
 function add_norm(df, signal)
-    out_df = deepcopy(df)
-    add_norm!(out_df, signal)
-    return out_df
+    norm_field = Symbol(Symbol(signal), :_norm)
+    return add_norm(df, signal, norm_field)
 end
 
 
