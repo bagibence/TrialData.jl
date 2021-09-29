@@ -7,37 +7,49 @@ interval_around_point(trial, point_name, before, after) = interval_around_index(
 intervals_around_points(trial, point_name, before, after) = intervals_around_indices(trial[point_name], before, after)
 
 
-function _ref_time_field(df)
-    return [col for col in names(df) if endswith(col, "spikes") | endswith(col, "rates")][1]
+function _ref_time_field(trial_or_df)
+    return first([col for col in names(trial_or_df) if endswith(col, "spikes") || endswith(col, "rates")])
 end
 
-function trial_length(trial, ref_field)
+function get_trial_length(trial_or_df)
+    return get_trial_length(trial_or_df, _ref_time_field(trial_or_df))
+end
+
+function get_trial_length(trial::DataFrameRow, ref_field)
     return size(trial[ref_field], 1)
 end
 
-function trial_length(trial)
-    return trial_length(trial, _ref_time_field(trial))
+function get_trial_length(df::AbstractDataFrame, ref_field)
+    trial_lengths = [get_trial_length(trial, ref_field) for trial in eachrow(df)]
+    
+    @assert length(unique(trial_lengths)) == 1
+    
+    return trial_lengths[1]
 end
 
+function time_varying_fields(trial::DataFrameRow, ref_field)
+    T = get_trial_length(trial, ref_field)
 
-function time_varying_fields(df, ref_field)
-    first_trial = first(df)
-    T = trial_length(first_trial, ref_field)
-    
     time_fields = []
-    for col in names(first_trial)
+    for col in names(trial)
         try
-            if trial_length(first_trial, col) == T
+            if get_trial_length(trial, col) == T
                 push!(time_fields, col)
             end
         catch
         end
     end
-    
+
+    return time_fields
+end
+
+function time_varying_fields(df, ref_field)
+    time_fields = time_varying_fields(first(df))
+
     for trial in eachrow(df)
-        ref_T = trial_length(trial, ref_field)
+        ref_T = get_trial_length(trial, ref_field)
         for col in time_fields
-            @assert trial_length(trial, col) == ref_T
+            @assert get_trial_length(trial, col) == ref_T
         end
     end
     
@@ -54,7 +66,7 @@ end
 
 
 function _interval_in_trial(trial, interval, ref_field)
-    T = trial_length(trial, ref_field)
+    T = get_trial_length(trial, ref_field)
     
     return !(interval.start < 1 || interval.stop > T)
 end
@@ -78,8 +90,13 @@ end
 _epoch_start(trial, epoch_fun::Function) = epoch_fun(trial).start
 _epoch_start(trial, epoch) = epoch.start
 
+# I don't know how much sense this makes
+function restrict_to_interval(trial::DataFrameRow, epoch, ref_field)
+    return first(restrict_to_interval(DataFrame(trial), epoch, ref_field))
+end
+
 function restrict_to_interval(df, epoch, ref_field)
-    out_df = select_trials(df, trial -> _interval_in_trial(trial, epoch, ref_field))
+    out_df = filter(trial -> _interval_in_trial(trial, epoch, ref_field), df)
 
     dropped_ids = Int.(setdiff(df.trial_id, out_df.trial_id))
     if !isempty(dropped_ids)
@@ -104,7 +121,7 @@ function restrict_to_interval(df, epoch, ref_field)
 
     for trial in eachrow(out_df)
         t0 = _epoch_start(trial, epoch)
-        T = trial_length(trial, ref_field)
+        T = get_trial_length(trial, ref_field)
 
         for col in idx_fields
             trial[col] -= t0
