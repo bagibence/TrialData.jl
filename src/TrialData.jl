@@ -87,7 +87,7 @@ export
     get_regr_cv_scores_through_time,
     get_predictive_axis_through_time,
     cross_val_score, KFold, StratifiedKFold,
-    make_scorer, r2_score, accuracy_score, default_scorer
+    make_scorer, r2_score, accuracy_score, default_scorer,
 
     stretch
 
