@@ -14,7 +14,7 @@
 Concatenate the given field of every trial from the dataframe
 (Assumes that time is the first axis.)
 """
-function concat_trials(df, fieldname)::Array{Float64, 2}
+function concat_trials(df, fieldname)#::Array{Float64, 2}
     return vcat(df[!, fieldname]...)
 end
 
