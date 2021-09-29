@@ -68,3 +68,18 @@ function subtract_cross_condition_mean(df)
     ref_field = _ref_time_field(df)
     return subtract_cross_condition_mean(df, ref_field)
 end
+
+lendiff(arr::AbstractVector) = [0; diff(arr)];
+lendiff(arr, dims=1) = mapslices(lendiff, arr, dims=dims);
+
+function add_gradient(df, signal, outfield)
+    outdf = deepcopy(df)
+    outdf[!, outfield] = [lendiff(v) ./ df.bin_size[1] for v in df[!, signal]]
+
+    return outdf
+end
+
+function add_gradient(df, signal)
+    diff_field = Symbol(:d, Symbol(signal))
+    return add_gradient(df, signal, diff_field)
+end
