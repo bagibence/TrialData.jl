@@ -87,6 +87,8 @@ export
     cross_val_score, KFold, StratifiedKFold,
     make_scorer, r2_score, accuracy_score, default_scorer
 
+    stretch
+
 include("constants.jl")
 include("io.jl")
 include("smoothing.jl")
@@ -101,5 +103,6 @@ include("match_histograms.jl")
 include("dimensionality.jl")
 include("movement_onset.jl")
 include("decoding.jl")
+include("stretching.jl")
 
 end # module
