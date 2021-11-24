@@ -30,9 +30,20 @@ function match_histograms(df::AbstractDataFrame, grouping_field, matching_field,
     groups = groupby(df, grouping_field)
     sampled_indices, bins = match_histograms((subdf[!, matching_field] for subdf in groups),
                                              n_bins)
-    return (subdf[si, :] for (subdf, si) in zip(groups, sampled_indices)), bins
+    return [subdf[si, :] for (subdf, si) in zip(groups, sampled_indices)], bins
 end
 
 function digitize(arr, bins)
     return searchsortedlast.(Ref(bins), arr)
 end
+
+
+using Interpolations: LinearInterpolation
+# from https://stackoverflow.com/questions/39418380/histogram-with-equal-number-of-points-in-each-bin
+function histedges_equal_num(x, nbin)
+    npt = length(x)
+    interp = LinearInterpolation(0:npt-1, sort(x))
+
+    return [interp(xi) for xi in range(0, npt-1, length = nbin+1)]
+end
+

@@ -1,6 +1,6 @@
 module TrialData
 
-using StatsBase: sample
+using StatsBase: sample, percentile
 using Statistics: mean, median, var, std
 using DataFrames
 using DataFramesMeta
@@ -76,6 +76,7 @@ export
 
     match_histograms,
     digitize,
+    histedges_equal_num,
 
     twonn_dimension,
 
