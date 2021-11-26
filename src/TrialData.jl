@@ -40,6 +40,7 @@ export
     get_sig,
     stack_trials,
     stack_time_average,
+    group_by,
 
     #select_trials,
     rename_fields,
