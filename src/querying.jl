@@ -50,6 +50,24 @@ end
 
 
 """
+    expand_in_time(df, field)
+
+"Expand in time" and concatenate a scalar way in a way that the resulting array has the same
+number of time points as if we concatenated a time-varying signal from the same trials.
+Useful for regressing onto a scalar field at every timepoint.
+"""
+function expand_in_time(df, field)
+    subarrays = []
+    for trial in eachrow(df)
+        T = get_trial_length(trial)
+        push!(subarrays, trial[field] .* ones(T))
+    end
+    
+    return vcat(subarrays...)
+end
+
+
+"""
     group_by(df, field)
 
 Pandas-style groupby
