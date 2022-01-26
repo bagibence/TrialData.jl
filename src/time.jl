@@ -106,7 +106,7 @@ function restrict_to_interval(trial::DataFrameRow, epoch, ref_field)
     return first(restrict_to_interval(DataFrame(trial), epoch, ref_field))
 end
 
-function _validate_time_point(tp::Integer, T)
+function _validate_time_point(tp::Real, T)
     if ismissing(tp) | (tp < 1) | (tp > T)
         return missing
     else
