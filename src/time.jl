@@ -72,7 +72,18 @@ function _interval_in_trial(trial, interval, ref_field)
 end
 
 function _interval_in_trial(trial, epoch_fun::Function, ref_field)
-    interval = epoch_fun(trial)
+    interval = try
+        epoch_fun(trial)
+    catch err
+        # this is thrown if the index we're trying to use is missing
+        if isa(err, InexactError)
+            # in that case the interval is not in the trial
+            return false
+        # if something else happened, we don't want to just silently continue
+        else
+            rethrow()
+        end
+    end
 
     return _interval_in_trial(trial, interval, ref_field)
 end
@@ -95,8 +106,22 @@ function restrict_to_interval(trial::DataFrameRow, epoch, ref_field)
     return first(restrict_to_interval(DataFrame(trial), epoch, ref_field))
 end
 
+function _validate_time_point(tp::Integer, T)
+    if ismissing(tp) | (tp < 1) | (tp > T)
+        return missing
+    else
+        return tp
+    end
+end
+
+function _validate_time_point(time_points::AbstractArray, T)
+    return [_validate_time_point(tp, T) for tp in time_points]
+end
+
+
 function restrict_to_interval(df, epoch, ref_field)
-    out_df = filter(trial -> _interval_in_trial(trial, epoch, ref_field), df)
+    out_df = deepcopy(df)
+    out_df = filter(trial -> _interval_in_trial(trial, epoch, ref_field), out_df)
 
     dropped_ids = Int.(setdiff(df.trial_id, out_df.trial_id))
     if !isempty(dropped_ids)
@@ -110,25 +135,20 @@ function restrict_to_interval(df, epoch, ref_field)
     idx_fields = [col for col in names(out_df) if startswith(col, "idx")]
 
     # convert every index column to allow inserting a missing value
-    for col in idx_fields
-        dtypes = unique(typeof.(out_df[!, col]))
-        dtypes = [t for t in dtypes if t != Missing]
-        if length(dtypes) == 1
-            out_df[!, col] = convert(Array{Union{Missing, dtypes[1]}},
-                                     out_df[!, col])
-        end
-    end
+    allowmissing!(out_df)
 
     for trial in eachrow(out_df)
-        t0 = _epoch_start(trial, epoch)
+        t0 = _epoch_start(trial, epoch) - 1
         T = get_trial_length(trial, ref_field)
 
         for col in idx_fields
-            trial[col] -= t0
-
-            if ismissing(trial[col]) | (trial[col] < 1) | (trial[col] > T)
-                trial[col] = missing
+            if typeof(trial[col]) <: Vector
+                trial[col] .-= t0
+            else
+                trial[col] -= t0
             end
+
+            trial[col] = _validate_time_point(trial[col], T)
         end
     end
 
