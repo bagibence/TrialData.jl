@@ -4,7 +4,7 @@
 
 Turn a number or a collection to integers.
 """
-to_int(idx::Number) = isnan(idx) ? idx : Int(round(idx))
+to_int(idx::Number) = isnan(idx) ? missing : Int(round(idx))
 to_int(indices) = vec(to_int.(indices))
 
 
