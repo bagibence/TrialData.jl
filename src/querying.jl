@@ -85,3 +85,13 @@ function group_by(df, field)
     key_tuples = values.(keys(groups))
     return zip([length(k) == 1 ? k[1] : k for k in values.(keys(groups))], [DataFrame(g) for g in groups])
 end
+
+
+"""
+    get_idx_fields(df)
+
+Get dataframe fields that start with "idx" as symbols
+"""
+function get_idx_fields(df)
+    return [Symbol(col) for col in names(df) if startswith(string(col), "idx")]
+end;

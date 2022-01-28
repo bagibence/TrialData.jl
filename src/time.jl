@@ -132,7 +132,7 @@ function restrict_to_interval(df, epoch, ref_field)
         out_df[!, col] = restrict_to_epoch(out_df, col, epoch)
     end
 
-    idx_fields = [col for col in names(out_df) if startswith(col, "idx")]
+    idx_fields = get_idx_fields(df)
 
     # convert every index column to allow inserting a missing value
     allowmissing!(out_df)

@@ -14,7 +14,7 @@ to_int(indices) = vec(to_int.(indices))
 Turn fields of the the dataframe that start with "idx" to integers.
 """
 function clean_idx_fields!(df)
-    idx_fieldnames = [n for n in names(df) if startswith(n, "idx")]
+    idx_fieldnames = get_idx_fields(df)
 
     for trial in eachrow(df)
         for n in idx_fieldnames
