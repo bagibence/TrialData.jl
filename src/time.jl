@@ -75,8 +75,8 @@ function _interval_in_trial(trial, epoch_fun::Function, ref_field)
     interval = try
         epoch_fun(trial)
     catch err
-        # this is thrown if the index we're trying to use is missing
-        if isa(err, InexactError)
+        # this is thrown if the index we're trying to use is nan or missing
+        if isa(err, InexactError) | isa(err, MethodError)
             # in that case the interval is not in the trial
             return false
         # if something else happened, we don't want to just silently continue
