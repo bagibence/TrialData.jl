@@ -106,7 +106,7 @@ function restrict_to_interval(trial::DataFrameRow, epoch, ref_field)
     return first(restrict_to_interval(DataFrame(trial), epoch, ref_field))
 end
 
-function _validate_time_point(tp::Real, T)
+function _validate_time_point(tp, T)
     if ismissing(tp) | (tp < 1) | (tp > T)
         return missing
     else
@@ -142,7 +142,7 @@ function restrict_to_interval(df, epoch, ref_field)
         T = get_trial_length(trial, ref_field)
 
         for col in idx_fields
-            if typeof(trial[col]) <: Vector
+            if typeof(trial[col]) <: AbstractVector
                 trial[col] .-= t0
             else
                 trial[col] -= t0
