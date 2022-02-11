@@ -58,11 +58,17 @@ Useful for regressing onto a scalar field at every timepoint.
 """
 function expand_in_time(df, field)
     subarrays = []
+    
     for trial in eachrow(df)
         T = get_trial_length(trial)
-        push!(subarrays, trial[field] .* ones(T))
+
+        if isa(trial[field], Vector)
+            push!(subarrays, repeat(transpose(trial[field]), T))
+        else
+            push!(subarrays, fill(trial[field], T))
+        end
     end
-    
+
     return vcat(subarrays...)
 end
 
