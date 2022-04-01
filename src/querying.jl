@@ -15,12 +15,12 @@ Concatenate the given field of every trial from the dataframe
 (Assumes that time is the first axis.)
 """
 function concat_trials(df, fieldname)#::Array{Float64, 2}
-    return vcat(df[!, fieldname]...)
+    return vcat(df[:, fieldname]...)
 end
 
 
 function get_sig_by_trial(df, signal)
-    return cat(df[!, signal]..., dims=3)
+    return cat(df[:, signal]..., dims=3)
 end
 
 function merge_signals(df, signals, out_fieldname)
