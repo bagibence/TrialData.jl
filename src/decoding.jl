@@ -11,7 +11,7 @@ end
 
 
 
-function get_classif_cv_scores_through_time(df, classifier, input_field, out_field, cv = 10)
+function get_classif_cv_scores_through_time(df, classifier, input_field, out_field, cv = 10; n_jobs = 1)
 
     X_per_trial = permutedims(get_sig_by_trial(df, input_field), (3, 2, 1))
     y = df[!, out_field]
@@ -20,14 +20,14 @@ function get_classif_cv_scores_through_time(df, classifier, input_field, out_fie
     
     cv_scores = []
     for t in 1:T
-        push!(cv_scores, model_selection.cross_val_score(classifier, X_per_trial[:, :, t], y, cv = model_selection.StratifiedKFold(cv, shuffle=true)))
+        push!(cv_scores, model_selection.cross_val_score(classifier, X_per_trial[:, :, t], y, cv = model_selection.StratifiedKFold(cv, shuffle=true), n_jobs = n_jobs))
     end
     
     return hcat(cv_scores...)
 end
 
 
-function get_regr_cv_scores_through_time(df, regressor, input_field, out_field, cv = 10)
+function get_regr_cv_scores_through_time(df, regressor, input_field, out_field, cv = 10; n_jobs=1)
     default_scorer = sk_metrics.make_scorer(sk_metrics.r2_score, multioutput = "variance_weighted")
 
     X_per_trial = permutedims(get_sig_by_trial(df, input_field), (3, 2, 1))
@@ -37,7 +37,7 @@ function get_regr_cv_scores_through_time(df, regressor, input_field, out_field, 
     
     cv_scores = []
     for t in 1:T
-        push!(cv_scores, model_selection.cross_val_score(regressor, X_per_trial[:, :, t], y, cv = model_selection.KFold(cv, shuffle=true), scoring = default_scorer))
+        push!(cv_scores, model_selection.cross_val_score(regressor, X_per_trial[:, :, t], y, cv = model_selection.KFold(cv, shuffle=true), scoring = default_scorer, n_jobs = n_jobs))
     end
 
     
