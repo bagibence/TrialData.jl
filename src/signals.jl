@@ -83,3 +83,13 @@ function add_gradient(df, signal)
     diff_field = Symbol(:d, Symbol(signal))
     return add_gradient(df, signal, diff_field)
 end
+
+
+"""
+    time_average(df, signal)
+
+Return a N_trials x N_features matrix with the given signal averaged through time on each trial, then concatenated
+"""
+function time_average(df, signal)
+    return vcat((mean(arr, dims = 1) for arr in df[:, signal])...)
+end;

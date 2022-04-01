@@ -67,6 +67,7 @@ export
     add_norm!,
     add_norm,
     add_gradient,
+    time_average,
 
     nanmin,
     nanmax,
