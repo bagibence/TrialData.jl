@@ -74,7 +74,6 @@ export
     nanmean,
     nanmedian,
 
-    fit,
     dim_reduce,
 
     match_histograms,
