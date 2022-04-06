@@ -147,6 +147,8 @@ function to_pandas(arr::DimArray)
     return to_xarray(arr).to_pandas()
 end
 
+
+
 """
     to_xarray(K::DimArray)
 
@@ -154,7 +156,23 @@ Convert a DimensionalData.DimArray to an xr.DataArray (mostly for plotting).
 """
 function to_xarray(K::DimArray)
     xr = pyimport("xarray");
+
     return xr.DataArray(parent(K),
                         dims = name.(K.dims),
-                        coords = Dict(name(dim) => val(dim) for dim in K.dims))
+                        coords = _build_coords_dict(K.dims))
 end;
+
+"""
+    _build_coords_dict(dims)
+
+Helper for to_xarray
+"""
+function _build_coords_dict(dims)
+    d = Dict()
+    for dim in dims
+        try
+            d[name(dim)] = val(dim)
+        catch
+        end
+    end
+end
