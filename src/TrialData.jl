@@ -42,6 +42,7 @@ export
     stack_time_average,
     group_by,
     expand_in_time,
+    keep_common_trials,
 
     #select_trials,
     rename_fields,

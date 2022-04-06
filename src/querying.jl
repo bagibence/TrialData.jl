@@ -101,3 +101,31 @@ Get dataframe fields that start with "idx" as symbols
 function get_idx_fields(df)
     return [Symbol(col) for col in names(df) if startswith(string(col), "idx")]
 end;
+
+
+"""
+    keep_common_trials(df_a, df_b, join_field=:trial_id)
+
+Keep only trials with ID that are found in both data sets
+
+Parameters
+----------
+df_a : pd.DataFrame
+    first data set in trial_data format
+df_b : pd.DataFrame
+    second data set in trial_data format
+join_field : str, optional, default trial_id
+    field based on which trials are matched to each other
+
+Returns
+-------
+(subset_a, subset_b) : tuple of dataframes
+"""
+function keep_common_trials(df_a, df_b, join_field=:trial_id)
+    common_ids = Set(intersect(df_a[:, join_field], df_b[:, join_field]))
+    
+    subset_a = @subset(df_a, $(join_field) in common_ids);
+    subset_b = @subset(df_b, $(join_field) in common_ids);
+    
+    return subset_a, subset_b
+end
