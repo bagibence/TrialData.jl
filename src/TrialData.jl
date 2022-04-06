@@ -3,7 +3,7 @@ module TrialData
 using StatsBase: sample, percentile
 using Statistics: mean, median, var, std
 using DataFrames
-using DataFramesMeta
+using DataFrameMacros
 
 using HDF5: h5open
 using MAT: matopen

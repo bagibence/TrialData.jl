@@ -111,7 +111,7 @@ function hdf2df(path)
     array_fields = td["array_fields"]
     
     df = DataFrame(read(simple_fields))
-    df = @orderby(df, :trial_id)
+    df = sort(df, :trial_id)
     
     for fieldname in keys(array_fields)
         #arrays = [read(array_fields[fieldname][k]) for k in sort(keys(array_fields[fieldname]))];
