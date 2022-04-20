@@ -129,3 +129,13 @@ function keep_common_trials(df_a, df_b, join_field=:trial_id)
     
     return subset_a, subset_b
 end
+
+
+"""
+    sample(df::AbstractDataFrame, n; replace=false)
+
+Sample n rows of a DataFrame
+"""
+function sample(df::AbstractDataFrame, n; replace=false)
+    return df[sample(axes(df, 1), n; replace = replace, ordered = true), :]
+end
