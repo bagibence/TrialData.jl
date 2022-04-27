@@ -33,6 +33,7 @@ export
     norm_gauss_window,
     smooth_spikes,
     smooth_signals,
+    moving_average,
     
     concat_trials,
     get_sig_by_trial,

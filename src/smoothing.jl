@@ -83,3 +83,17 @@ function smooth_signals(df, signals, hw::Number=DEFAULT_HW)
 
     return smooth_signals(df, signals, win)
 end
+
+
+"""
+    moving_average(vs, n)
+
+Calculate a moving average of vector vs with a window of n elements
+"""
+function moving_average(vs::AbstractVector, n)
+    return [mean(@view vs[i:(i+n-1)]) for i in 1:(length(vs)-(n-1))]
+end
+
+function moving_average(sig::AbstractMatrix, n; dims=1)
+    return mapslices(v -> moving_average(v, n), sig; dims = dims)
+end
