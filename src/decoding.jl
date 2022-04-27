@@ -3,10 +3,12 @@
 # https://github.com/cstjean/ScikitLearn.jl/issues/50
 const model_selection = PyNULL()
 const sk_metrics = PyNULL()
+const default_scorer = PyNULL()
 
 function __init__()
     copy!(model_selection, pyimport("sklearn.model_selection"))
     copy!(sk_metrics, pyimport("sklearn.metrics"))
+    copy!(default_scorer, sk_metrics.make_scorer(sk_metrics.r2_score, multioutput = "variance_weighted"))
 end
 
 
