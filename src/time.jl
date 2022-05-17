@@ -7,10 +7,22 @@ interval_around_point(trial, point_name, before, after) = interval_around_index(
 intervals_around_points(trial, point_name, before, after) = intervals_around_indices(trial[point_name], before, after)
 
 
+"""
+    _ref_time_field(trial_or_df)
+
+Find a field that ends with "spikes" or "rates" to use as a reference for time-varying fields.
+"""
 function _ref_time_field(trial_or_df)
     return first([col for col in names(trial_or_df) if endswith(col, "spikes") || endswith(col, "rates")])
 end
 
+"""
+    get_trial_length(trial_or_df)
+    get_trial_length(trial_or_df, ref_field)
+
+Number of time points in the trial(s).
+If a DataFrame is passed, all trials have to have the same length.
+"""
 function get_trial_length(trial_or_df)
     return get_trial_length(trial_or_df, _ref_time_field(trial_or_df))
 end
@@ -27,6 +39,13 @@ function get_trial_length(df::AbstractDataFrame, ref_field)
     return trial_lengths[1]
 end
 
+"""
+    time_varying_fields(trial::DataFrameRow[, ref_field])
+    time_varying_fields(df::AbstractDataFrame[, ref_field])
+
+Find the fields of the DataFrame or trial that have the same length as `ref_field`.
+If `ref_field` is not given, it is inferred.
+"""
 function time_varying_fields(trial::DataFrameRow, ref_field)
     T = get_trial_length(trial, ref_field)
 
@@ -43,7 +62,7 @@ function time_varying_fields(trial::DataFrameRow, ref_field)
     return time_fields
 end
 
-function time_varying_fields(df, ref_field)
+function time_varying_fields(df::AbstractDataFrame, ref_field)
     time_fields = time_varying_fields(first(df))
 
     for trial in eachrow(df)
@@ -65,6 +84,13 @@ end
 
 
 
+"""
+    _interval_in_trial(trial, interval, ref_field)
+    _interval_in_trial(trial, epoch_fun::Function, ref_field)
+
+Test if `interval` (potentially calculated from `epoch_fun`) is within the trial
+and doesn't index out of it.
+"""
 function _interval_in_trial(trial, interval, ref_field)
     T = get_trial_length(trial, ref_field)
     
@@ -159,6 +185,12 @@ function restrict_to_interval(df, epoch, ref_field)
 end
 
 
+"""
+    restrict_to_interval(df, epoch[, ref_field])
+
+Restrict dataframe's time varying fields to a given `epoch`.
+`epoch` can be a function or a slice.
+"""
 function restrict_to_interval(df, epoch)
     ref_field = _ref_time_field(df)
     return restrict_to_interval(df, epoch, ref_field)

@@ -43,6 +43,16 @@ function _twonn_dimension(X, discard_fraction=0.1)
 end
 
 
+"""
+    twonn_dimension(X, discard_fraction=0.1; precomputed=false)
+
+Calculate nonlinear dimensionality of `X` using two-NN.
+
+# Extra arguments
+
+- `discard_fraction::Float=0.1`: fraction of distance ratios to discard
+- `precomputed::Bool=false`: if true, treat X as a distance matrix instead data samples
+"""
 function twonn_dimension(X, discard_fraction=0.1; precomputed=false)
     if precomputed
         return _dim_from_mus(get_mu_from_precomputed(X), discard_fraction)

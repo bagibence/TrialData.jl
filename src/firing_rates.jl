@@ -1,14 +1,9 @@
-function get_average_firing_rates(df, signal, divide_by_bin_size)
-    @assert length(unique(df.bin_size)) == 1
+"""
+    _divide_by_bin_size(signal)
 
-    if divide_by_bin_size
-        return vec(mean(concat_trials(df, signal), dims=1) / df.bin_size[1])
-    else
-        return vec(mean(concat_trials(df, signal), dims=1))
-    end
-end
-
-
+Infer if we have to divide by the bin size or not.
+For spikes we have to divide by the bin size, but for firing rates that is usually already done.
+"""
 function _divide_by_bin_size(signal)
     if endswith(String(signal), "spikes")
         @warn "Assuming spikes are actually spikes and dividing by bin size."
@@ -21,13 +16,47 @@ function _divide_by_bin_size(signal)
     end
 end
 
+"""
+    get_average_firing_rates(df, signal[, divide_by_bin_size])
+
+Get a vector of average firing rates per neuron in the `signal` field of `df`.
+
+`divide_by_bin_size` is ideally inferred from the name of the signal.
+For spikes we have to divide by the bin size, but for firing rates that is usually already done.
+The value of the bin size is read from the `bin_size` field of `df`.
+See also [`_divide_by_bin_size`](@ref)
+"""
 function get_average_firing_rates(df, signal)
     divide_by_bin_size = _divide_by_bin_size(signal)
 
     return get_average_firing_rates(df, signal, divide_by_bin_size)
 end
 
+function get_average_firing_rates(df, signal, divide_by_bin_size)
+    @assert length(unique(df.bin_size)) == 1
 
+    if divide_by_bin_size
+        return vec(mean(concat_trials(df, signal), dims=1) / df.bin_size[1])
+    else
+        return vec(mean(concat_trials(df, signal), dims=1))
+    end
+end
+
+
+
+"""
+    _spikes_and_rates_fields(df, signal)
+
+Find the "spikes" / "rates" counterpart of `signal` in `df`.
+
+# Examples
+`_spikes_and_rates_fields(df, :PMd_spikes)`
+
+gives
+
+`[:PMd_spikes, :PMd_rates]` if `:PMd_rates` is in `df`
+`[:PMd_spikes]` and a warning otherwise
+"""
 function _spikes_and_rates_fields(df, signal)
     ssignal = String(signal)
     if endswith(ssignal, "spikes")
@@ -47,6 +76,11 @@ function _spikes_and_rates_fields(df, signal)
 end
 
 
+"""
+    remove_low_firing_neurons(df, signal, threshold[, divide_by_bin_size])
+
+Remove neurons from `signal` whose average firing rate is below `threshold`.
+"""
 function remove_low_firing_neurons(df, signal, threshold, divide_by_bin_size)
     out_df = deepcopy(df)
 
@@ -67,6 +101,11 @@ function remove_low_firing_neurons(df, signal, threshold, divide_by_bin_size)
 end
 
 
+"""
+    _add_rates!(df, spike_fields, rate_fields, f)
+
+Apply `f` to every element in `spike_fields` and save it in `rate_fields`.
+"""
 function _add_rates!(df, spike_fields, rate_fields, f)
     for (spike_col, rate_col) in zip(spike_fields, rate_fields)
         df[!, rate_col] = [f(arr) for arr in df[!, spike_col]]
@@ -75,6 +114,20 @@ function _add_rates!(df, spike_fields, rate_fields, f)
     return df
 end
 
+"""
+    add_firing_rates(df, method; win=nothing, hw=nothing, std=nothing)
+
+Add firing rates calculated from spikes using the chosen method to the dataframe.
+
+# Arguments
+#
+- `df::DataFrame`: dataframe in TrialData format
+- `method::Symbol`: `:bin` or `:smooth`. If smooth and none of win, hw, and std are given,
+a Gaussian kernel with the default smoothing half-width defined in `globals.DEFAULT_HW` is used.
+- `win::Vector`: smoothing window to use.
+- `hw::Integer`: half-width of the Gaussian smoothing kernel in ms.
+- `std::Integer`: standard deviation of the Gaussian smoothing kernel.
+"""
 function add_firing_rates(df, method; win=nothing, hw=nothing, std=nothing)
     out_df = deepcopy(df)
 

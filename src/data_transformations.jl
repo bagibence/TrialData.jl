@@ -1,3 +1,9 @@
+"""
+    center(arr)
+    center(df, fieldname)
+
+Center array or field in a dataframe by removing the mean along the first dimension.
+"""
 function center(arr)
     # center each column to zero by removing the mean
     return arr .- mean(arr, dims=1)
@@ -11,9 +17,27 @@ function center(df, fieldname)
 end
 
 
+"""
+    col_range(arr)
+
+Range of values (max - min) in each column of `arr`.
+"""
 col_range(arr) = maximum(arr, dims=1) - minimum(arr, dims=1)
+
+"""
+    row_range(arr)
+
+Range of values (max - min) in each row of `arr`.
+"""
 row_range(arr) = maximum(arr, dims=2) - minimum(arr, dims=2)
 
+
+"""
+    center_normalize(arr)
+    center_normalize(df, fieldname)
+
+Remove the mean and divide by the column range
+"""
 function center_normalize(arr)
     return (arr .- mean(arr, dims=1)) ./ col_range(arr)
 end
@@ -27,6 +51,12 @@ function center_normalize(df, fieldname)
 end
 
 
+"""
+    zero_normalize(arr)
+    zero_normalize(df, fieldname)
+
+Normalize between 0 and 1 by removing the minimum and dividing by the column range
+"""
 function zero_normalize(arr)
     return (arr .- minimum(arr, dims=1)) ./ col_range(arr)
 end
@@ -40,6 +70,13 @@ function zero_normalize(df, fieldname)
 end
 
 
+"""
+    z_score(vect::AbstractVector)
+    z_score(vect::AbstractMatrix)
+    z_score(df, fieldname)
+
+z-score by removing the mean and dividing by the standard deviation.
+"""
 function z_score(vect::AbstractVector)
     return (vect .- mean(vect)) ./ std(vect)
 end
@@ -57,6 +94,12 @@ function z_score(df, fieldname)
 end
 
 
+"""
+    soft_normalize(arr; alpha=5)
+    soft_normalize(df, fieldname; alpha=5)
+
+"Soft-normalize" by dividing by (column range + alpha)
+"""
 function soft_normalize(arr; alpha=5)
     norm_factor = col_range(arr) .+ alpha
 
@@ -71,6 +114,12 @@ function soft_normalize(df, fieldname; alpha=5)
 end
 
 
+"""
+    sqrt_transform(arr)
+    sqrt_transform(arr, fieldname)
+
+Elementwise square-root transform
+"""
 function sqrt_transform(arr)
     return sqrt.(arr)
 end
