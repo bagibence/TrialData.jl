@@ -1,6 +1,11 @@
 using Interpolations: LinearInterpolation
 
 
+"""
+    stretch(arr::AbstractVector, old_anchors, new_anchors)
+
+Stretch time series by aligning `.old_anchors`. to `new_anchors`. 
+"""
 function stretch(arr::AbstractVector, old_anchors, new_anchors)
     time = new_anchors[1]:new_anchors[end]
     tt = 1:length(arr)
@@ -23,6 +28,12 @@ function stretch(arr::AbstractVector, old_anchors, new_anchors)
 end
 
 
+"""
+    stretch(arr::AbstractMatrix, old_anchors, new_anchors)
+
+Stretch multiple time series by aligning `.old_anchors`. to `new_anchors`. 
+The stretch is applied to each column of the matrix.
+"""
 function stretch(arr::AbstractMatrix, old_anchors, new_anchors)
     stretched = Matrix{Float64}(undef, length(new_anchors[1]:new_anchors[end]), size(arr, 2))
     

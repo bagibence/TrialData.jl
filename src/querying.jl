@@ -19,10 +19,21 @@ function concat_trials(df, fieldname)#::Array{Float64, 2}
 end
 
 
+"""
+    get_sig_by_trial(df, signal)
+
+Get a 3D tensor containing `signal`'s values on each trial.
+The result is of shape `time x signal_dimensionality x n_trials`.
+"""
 function get_sig_by_trial(df, signal)
     return cat(df[:, signal]..., dims=3)
 end
 
+"""
+    merge_signals(df, signals, out_fieldname)
+
+Merge multiple signals into one by stacking them horizontally and store it in `out_fieldname`.
+"""
 function merge_signals(df, signals, out_fieldname)
     out_df = deepcopy(df)
 
@@ -34,6 +45,12 @@ end
 merge_fields = merge_signals
 
 
+"""
+    get_sig(df, signals...)
+
+Same as [`concat_trials`](@ref) but accepts multiple signal names,
+and stacks them horizontally.
+"""
 function get_sig(df, signals...)
     return hcat([concat_trials(df, sig) for sig in signals]...)
 end
@@ -44,6 +61,12 @@ function stack_trials(df, field)
 end
 
 
+"""
+    stack_time_average(df, field)
+
+Average field in time on each trial, then stack trials under each other,
+giving an `n_trials x signal_dimensionality` matrix.
+"""
 function stack_time_average(df, field)
     return vcat([mean(arr, dims=1) for arr in df[:, field]]...)
 end
@@ -134,7 +157,7 @@ end
 """
     sample(df::AbstractDataFrame, n; replace=false)
 
-Sample n rows of a DataFrame
+Sample `n` rows of a DataFrame
 """
 function sample(df::AbstractDataFrame, n; replace=false)
     return df[sample(axes(df, 1), n; replace = replace, ordered = true), :]

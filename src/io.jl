@@ -36,6 +36,12 @@ function clean_idx_fields(df)
     return clean_idx_fields!(outdf)
 end
 
+"""
+    clean_types!(df)
+
+`clean_types(df)` in-place.
+See [`clean_types`](@ref).
+"""
 function clean_types!(df)
     for col in names(df)
         dtypes = unique(typeof.(df[!, col]))
@@ -55,11 +61,22 @@ function clean_types!(df)
     return df
 end
 
+"""
+    clean_types(df)
+
+Clean the data types of `df`.
+If all values in a column have the same type, cast all of them into that type.
+"""
 function clean_types(df)
     outdf = deepcopy(df)
     return clean_types!(outdf)
 end
 
+"""
+    replace_nans!(df)
+
+Replace `NaN` values with `missing`.
+"""
 function replace_nans!(df)
     for col in names(df)
         try
@@ -79,6 +96,13 @@ end
 Read a data set saved in a .MAT file's fieldname variable and turn fields starting with "idx" to integers.
 If fieldname is not given, it is assumed that only one variable is saved in the .MAT file.
 """
+function mat2df(filename)
+    data = matopen(filename)
+    fieldnames = names(data)
+    @assert length(fieldnames) == 1
+    return mat2df(filename, first(fieldnames))
+end
+
 function mat2df(filename, fieldname)
     trial_data = read(matopen(filename), fieldname)
 
@@ -90,12 +114,6 @@ function mat2df(filename, fieldname)
     return cleaned_data |> DataFrame |> clean_idx_fields! |> replace_nans! |> clean_types!
 end
 
-function mat2df(filename)
-    data = matopen(filename)
-    fieldnames = names(data)
-    @assert length(fieldnames) == 1
-    return mat2df(filename, first(fieldnames))
-end
 
 
 """
@@ -134,7 +152,7 @@ end
     to_pandas(df)
     to_pandas(arr::DimArray)
 
-Convert a DataFrame or DimArray to a pd.DataFrame because seaborn can only handle pandas DataFrames
+Convert a DataFrame or DimArray to a pd.DataFrame because seaborn can only handle pandas DataFrames.
 """
 function to_pandas(df)
     # this works for now but might want to create a global variable for pd like the docs say

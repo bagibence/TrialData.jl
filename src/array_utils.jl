@@ -3,7 +3,8 @@ import Base.split
 """
     split(x, n)
 
-Split a long array (x) into subarrays of given lengths (n)
+Split a long array (`x`) into subarrays of given lengths (`n`).
+If `x` is a matrix, split along the first dimension.
 """
 function Base.split(x::AbstractVector, n)
     result = Vector{Vector{eltype(x)}}()

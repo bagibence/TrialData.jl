@@ -1,3 +1,8 @@
+"""
+    get_movement_onset(s::AbstractVector, min_ds=1.9, s_thresh=10, peak_divisor=2)
+
+Translation of the function in the matlab version of TrialData.
+"""
 function get_movement_onset(s::AbstractVector, min_ds=1.9, s_thresh=10, peak_divisor=2)
     # I'm not sure what this is
     abs_acc_thresh = NaN
@@ -38,9 +43,6 @@ function get_movement_onset(s::AbstractVector, min_ds=1.9, s_thresh=10, peak_div
     return on_idx
 end
 
-function get_peak(s)
-    peak_idx = argmax(s)
-end
 
 function get_movement_onset(trial, exec_idx)
     s = [norm(veli) for veli in eachrow(trial.vel[exec_idx, :])];
@@ -53,22 +55,13 @@ function get_movement_onset(trial; kwargs...)
     return get_movement_onset(trial.vel_norm[trial.idx_go_cue:end]; kwargs...) + trial.idx_go_cue
 end
 
-function add_movement_onset(df; kwargs...)
-    outdf = deepcopy(df)
-
-    outdf[!, :idx_movement_on] = [get_movement_onset(trial; kwargs...) for trial in eachrow(outdf)]
-
-    return outdf
-end
-
 
 function get_movement_peak(trial, exec_idx)
     s = [norm(veli) for veli in eachrow(trial.vel[exec_idx, :])];
-    rel_peak_idx = get_peak(s)
+    rel_peak_idx = argmax(s)
     
     return exec_idx[1] + rel_peak_idx - 1
 end
-
 
 function get_movement_onsets(trial, exec_indices)
     return [get_movement_onset(trial, idx) for idx in exec_indices]
@@ -78,3 +71,11 @@ function get_movement_peaks(trial, exec_indices)
     return [get_movement_peak(trial, idx) for idx in exec_indices]
 end
 
+
+function add_movement_onset(df; kwargs...)
+    outdf = deepcopy(df)
+
+    outdf[!, :idx_movement_on] = [get_movement_onset(trial; kwargs...) for trial in eachrow(outdf)]
+
+    return outdf
+end

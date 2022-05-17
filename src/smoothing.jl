@@ -30,7 +30,7 @@ end
     smooth_spikes(neuron_spikes, bin_size, hw)
     smooth_spikes(pop_spikes, bin_size, hw)
 
-Smooth spikes of a single neuron with the given smoothing window win.
+Smooth spikes of a single neuron or a population of neurons with the given smoothing window `.win`.
 """
 function smooth_spikes(neuron_spikes::AbstractVector, win::AbstractVector)
     hw = floor(length(win) / 2) |> Int
@@ -54,19 +54,10 @@ end
 
 
 """
-    smooth_signals(df, sig::T, win::AbstractVector) where T <: Union{String, Symbol}
-
     smooth_signals(df, signals, win::AbstractVector)
-    smooth_signals(df, signals, hw::Number=DEFAULT_HW)
+
+Smooth the values of `signals` in `df` with the smoothing window `win`.
 """
-function smooth_signals(df, sig::T, win::AbstractVector) where T <: Union{String, Symbol}
-    outdf = deepcopy(df)
-
-    outdf[!, sig] = [smooth_spikes(arr, win) for arr in outdf[!, sig]]
-
-    return outdf
-end
-
 function smooth_signals(df, signals, win::AbstractVector)
     outdf = deepcopy(df)
 
@@ -77,6 +68,15 @@ function smooth_signals(df, signals, win::AbstractVector)
     return outdf
 end
 
+function smooth_signals(df, sig::T, win::AbstractVector) where T <: Union{String, Symbol}
+    return smooth_signals(df, [sig], win)
+end
+
+"""
+    smooth_signals(df, signals, hw::Number=DEFAULT_HW)
+
+Smooth the values of `signals` in `df` with a Gaussian window with a half-width of `hw`.
+"""
 function smooth_signals(df, signals, hw::Number=DEFAULT_HW)
     bin_size = df.bin_size[1]
     win = norm_gauss_window(bin_size; hw=hw)
@@ -85,15 +85,22 @@ function smooth_signals(df, signals, hw::Number=DEFAULT_HW)
 end
 
 
+
 """
     moving_average(vs, n)
 
-Calculate a moving average of vector vs with a window of n elements
+Calculate a moving average of vector `vs` with a window of `n` elements
 """
 function moving_average(vs::AbstractVector, n)
     return [mean(@view vs[i:(i+n-1)]) for i in 1:(length(vs)-(n-1))]
 end
 
+"""
+    moving_average(sig::AbstractMatrix, n; dims=1)
+
+Calculate a moving average of the vectors in the matrix `sig` with a window of `n` elements,
+along the dimension given by `dims`.
+"""
 function moving_average(sig::AbstractMatrix, n; dims=1)
     return mapslices(v -> moving_average(v, n), sig; dims = dims)
 end
