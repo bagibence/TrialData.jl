@@ -138,7 +138,7 @@ function add_firing_rates(df, method; win=nothing, hw=nothing, std=nothing)
 
     if method == :bin
         out_df = _add_rates!(out_df, spike_fields, rate_fields,
-                             arr -> (arr./ bin_size))
+                             arr -> (arr ./ bin_size))
     elseif method == :smooth
         if win !== nothing
             @assert (hw === nothing) && (std === nothing)
@@ -152,7 +152,7 @@ function add_firing_rates(df, method; win=nothing, hw=nothing, std=nothing)
         end
 
         out_df = _add_rates!(out_df, spike_fields, rate_fields,
-                             arr -> smooth_spikes(arr, win))
+                             arr -> smooth_spikes(arr, win) ./ bin_size)
 
     else
         throw(ArgumentError("method has to be :bin or :smooth"))
