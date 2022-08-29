@@ -72,6 +72,7 @@ export
     add_norm,
     add_gradient,
     time_average,
+    signal_dimensionality,
 
     nanmin,
     nanmax,

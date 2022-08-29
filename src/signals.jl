@@ -93,3 +93,17 @@ Return a N_trials x N_features matrix with the given signal averaged through tim
 function time_average(df, signal)
     return vcat((mean(arr, dims = 1) for arr in df[:, signal])...)
 end;
+
+
+"""
+    signal_dimensionality(df::AbstractDataFrame, signal::Union{Symbol, String})
+
+Determine signal dimensionality.
+"""
+function signal_dimensionality(df::AbstractDataFrame, signal::Union{Symbol, String})
+    N = size(df[1, signal], 2)
+    
+    @assert all(size.(df[:, signal], 2) .== N)
+    
+    return N
+end;
