@@ -21,7 +21,7 @@ end
 function _dim_from_mus(mus, discard_fraction)
     N = length(mus)
     
-    num_mus_to_keep = Int(N * (1 - discard_fraction))
+    num_mus_to_keep = Int(floor(N * (1 - discard_fraction)))
     indices_to_keep = sortperm(mus)[1:num_mus_to_keep]
     kept_mus = mus[indices_to_keep]
     
