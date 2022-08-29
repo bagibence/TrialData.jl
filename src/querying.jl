@@ -147,8 +147,8 @@ Returns
 function keep_common_trials(df_a, df_b, join_field=:trial_id)
     common_ids = Set(intersect(df_a[:, join_field], df_b[:, join_field]))
     
-    subset_a = @subset(df_a, $(join_field) in common_ids);
-    subset_b = @subset(df_b, $(join_field) in common_ids);
+    subset_a = @subset(df_a, {join_field} in common_ids);
+    subset_b = @subset(df_b, {join_field} in common_ids);
     
     return subset_a, subset_b
 end
