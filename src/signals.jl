@@ -107,3 +107,15 @@ function signal_dimensionality(df::AbstractDataFrame, signal::Union{Symbol, Stri
     
     return N
 end;
+
+
+"""
+    signal_at_t(df, signal, t)
+
+Build `n_trials` x `signal_dim` matrix from the values of a signal
+at time t across trials.
+"""
+function signal_at_t(df, signal, t)
+    return transpose(hcat([arr[t, :] for arr in df[!, signal]]...))
+end
+
