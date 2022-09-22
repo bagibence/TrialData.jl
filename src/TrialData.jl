@@ -1,7 +1,7 @@
 module TrialData
 
 import StatsBase.sample
-using StatsBase: percentile
+using StatsBase: percentile, countmap
 using Statistics: mean, median, var, std
 using DataFrames
 using DataFrameMacros
@@ -46,6 +46,7 @@ export
     expand_in_time,
     keep_common_trials,
     sample,
+    balance_conditions,
 
     #select_trials,
     rename_fields,

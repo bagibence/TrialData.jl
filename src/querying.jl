@@ -162,3 +162,20 @@ Sample `n` rows of a DataFrame
 function sample(df::AbstractDataFrame, n; replace=false)
     return df[sample(axes(df, 1), n; replace = replace, ordered = true), :]
 end
+
+
+"""
+    balance_conditions(df::AbstractDataFrame, grouping_field)
+
+Subsample trials from `df` such that it has the same number of trials for each value of `grouping_field`.
+"""
+function balance_conditions(df::AbstractDataFrame, grouping_field)
+    n_to_sample = minimum(collect(values(countmap(df[!, grouping_field]))))
+    
+    sampled_df = vcat([sample(g, n_to_sample) for g in groupby(df, grouping_field)]...);
+
+    #@assert (@pipe sampled_df |> groupby(_, grouping_field) |> @combine(_, :n_trials = @nrow) |> _.n_trials |> unique |> length) == 1
+    @assert length(unique(@combine(groupby(sampled_df, grouping_field), :n_trials = @nrow).n_trials)) == 1
+    
+    return sampled_df
+end
