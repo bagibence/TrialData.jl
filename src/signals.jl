@@ -20,7 +20,7 @@ function add_norm(df, signal)
 end
 
 
-rename_fields = rename
+rename_fields = DataFrames.rename
 
 
 # if all the elements are the same string, then the _col_mean should be that string

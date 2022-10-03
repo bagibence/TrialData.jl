@@ -168,9 +168,10 @@ end
 
 
 """
-    to_xarray(K::DimArray)
+$(SIGNATURES)
 
-Convert a DimensionalData.DimArray to an xr.DataArray (mostly for plotting).
+Convert a DimensionalData.DimArray, NamedDims.NamedDimsArray, or AxisKeys.KeyedArray
+to an xr.DataArray (mostly for plotting).
 """
 function to_xarray(K::DimArray)
     xr = pyimport("xarray");
@@ -178,7 +179,22 @@ function to_xarray(K::DimArray)
     return xr.DataArray(parent(K),
                         dims = name.(K.dims),
                         coords = _build_coords_dict(K.dims))
-end;
+end
+
+function to_xarray(K::NamedDimsArray)
+    xr = pyimport("xarray")
+
+    return xr.DataArray(parent(K),
+                        dims = dimnames(K))
+end
+
+function to_xarray(K::KeyedArray)
+    xr = pyimport("xarray")
+
+    return xr.DataArray(parent(K),
+                        dims = dimnames(K),
+                        coords = Dict(zip(dimnames(K), axiskeys(K))))
+end
 
 """
     _build_coords_dict(dims)

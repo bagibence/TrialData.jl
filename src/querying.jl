@@ -9,13 +9,18 @@
 
 
 """
-    concat_trials(df, fieldname)
+$(SIGNATURES)
 
 Concatenate the given field of every trial from the dataframe
 (Assumes that time is the first axis.)
 """
 function concat_trials(df, fieldname)#::Array{Float64, 2}
     return vcat(df[:, fieldname]...)
+end
+
+function concat_trials(X::NamedDimsArray)
+    stacked_X = join(X, (:time, :trial) => :sample)#::NamedDimsArray{(dimname, :sample), Float64, 2, Array{Float64, 2}}
+    return transpose(stacked_X)
 end
 
 

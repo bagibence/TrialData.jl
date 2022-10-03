@@ -1,5 +1,7 @@
 module TrialData
 
+using DocStringExtensions
+
 import StatsBase.sample
 using StatsBase: percentile, countmap
 using Statistics: mean, median, var, std
@@ -16,6 +18,8 @@ using DSP: gaussian, conv
 using LinearAlgebra: norm
 
 using DimensionalData
+using NamedDims
+using AxisKeys
 
 using NearestNeighbors
 using Distances: pairwise, Euclidean, CosineDist
