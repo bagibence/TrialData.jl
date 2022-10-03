@@ -1,18 +1,3 @@
-# this has to be done this way instead of @sk_import because otherwise it throws a segfault
-# https://github.com/JuliaPy/PyCall.jl/blob/master/README.md#using-pycall-from-julia-modules
-# https://github.com/cstjean/ScikitLearn.jl/issues/50
-const model_selection = PyNULL()
-const sk_metrics = PyNULL()
-const default_scorer = PyNULL()
-
-function __init__()
-    copy!(model_selection, pyimport("sklearn.model_selection"))
-    copy!(sk_metrics, pyimport("sklearn.metrics"))
-    copy!(default_scorer, sk_metrics.make_scorer(sk_metrics.r2_score, multioutput = "variance_weighted"))
-end
-
-
-
 """
     get_classif_cv_scores_through_time(df, classifier, input_field, out_field, cv = 10; n_jobs = 1)
 

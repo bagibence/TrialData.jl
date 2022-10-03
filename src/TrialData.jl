@@ -20,7 +20,7 @@ using DimensionalData
 using NearestNeighbors
 using Distances: pairwise, Euclidean, CosineDist
 
-using ScikitLearn: @sk_import
+include("scikit_imports.jl")
 
 export
     mat2df,
