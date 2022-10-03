@@ -60,3 +60,16 @@ function twonn_dimension(X, discard_fraction=0.1; precomputed=false)
         return _twonn_dimension(X, discard_fraction)
     end
 end
+
+"""
+$(SIGNATURES)
+
+Compute the participation ratio given a list of variances or a data matrix.
+"""
+function participation_ratio(lambdas::AbstractVector)
+    return sum(lambdas) ^ 2 / sum(lambdas .^ 2)
+end
+
+function participation_ratio(X::AbstractMatrix)
+    return sk_decomp.PCA().fit(X).explained_variance_ |> participation_ratio 
+end
