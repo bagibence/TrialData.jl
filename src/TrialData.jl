@@ -105,7 +105,9 @@ export
 
     stretch,
 
-    split
+    split,
+
+    plot
 
 include("constants.jl")
 include("io.jl")
@@ -123,5 +125,6 @@ include("movement_onset.jl")
 include("decoding.jl")
 include("stretching.jl")
 include("array_utils.jl")
+include("plotting.jl")
 
 end # module
