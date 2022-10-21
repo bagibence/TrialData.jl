@@ -92,6 +92,7 @@ export
     histedges_equal_num,
 
     twonn_dimension,
+    participation_ratio,
 
     get_movement_onset,
     get_movement_peak,
