@@ -91,6 +91,11 @@ export
     digitize,
     histedges_equal_num,
 
+    subsample_neurons!,
+    subsample_neurons,
+    match_number_of_neurons!,
+    match_number_of_neurons,
+
     twonn_dimension,
     participation_ratio,
 
@@ -121,6 +126,7 @@ include("signals.jl")
 include("nanfunctions.jl")
 include("dim_reduction.jl")
 include("match_histograms.jl")
+include("neuron_number.jl")
 include("dimensionality.jl")
 include("movement_onset.jl")
 include("decoding.jl")
