@@ -72,6 +72,7 @@ export
     get_average_firing_rates,
     remove_low_firing_neurons,
     add_firing_rates,
+    match_firing_rate_distributions!,
 
     add_norm!,
     add_norm,

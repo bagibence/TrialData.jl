@@ -160,3 +160,49 @@ function add_firing_rates(df, method; win=nothing, hw=nothing, std=nothing)
 
     return out_df
 end
+
+
+"""
+$(SIGNATURES)
+
+Match firing rate distributions between two signals and save
+the subsampled populations in `out_signals`.
+"""
+function match_firing_rate_distributions!(df, signals, out_signals = signals)
+    @assert length(signals) == 2
+    @assert length(out_signals) == 2
+    signal_a, signal_b = signals
+    out_signal_a, out_signal_b = out_signals
+
+    area_a_av_rates = get_average_firing_rates(df, signal_a);
+    area_b_av_rates = get_average_firing_rates(df, signal_b);
+
+    area_b_upper_bound = percentile(area_b_av_rates, 95)
+    area_a_upper_bound = percentile(area_a_av_rates, 95)
+
+    upper_bound = ceil(max(area_b_upper_bound, area_a_upper_bound))
+
+    fr_bins = 0:1:upper_bound;
+
+    sampled_area_a_indices = []
+    sampled_area_b_indices = []
+    for (start, stop) in zip(fr_bins[1:end-1], fr_bins[2:end])
+        area_a_indices = findall(start .< area_a_av_rates .< stop)
+        area_b_indices = findall(start .< area_b_av_rates .< stop)
+        
+        n_to_sample = min(length(area_a_indices), length(area_b_indices))
+        
+        if n_to_sample > 0
+            push!(sampled_area_a_indices, sample(area_a_indices, n_to_sample, replace = false))
+            push!(sampled_area_b_indices, sample(area_b_indices, n_to_sample, replace = false))
+        end
+    end
+
+    sampled_area_a_indices = sort(reduce(vcat, sampled_area_a_indices));
+    sampled_area_b_indices = sort(reduce(vcat, sampled_area_b_indices));
+
+    @transform!(df, {out_signal_a} = {signal_a}[:, sampled_area_a_indices]);
+    @transform!(df, {out_signal_b} = {signal_b}[:, sampled_area_b_indices]);
+
+    return df
+end
