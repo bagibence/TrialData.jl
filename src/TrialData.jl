@@ -113,6 +113,7 @@ export
     stretch,
 
     split,
+    cummean,
 
     plot
 

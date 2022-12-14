@@ -27,3 +27,12 @@ function Base.split(x::AbstractMatrix, n)
     end
     return result
 end
+
+
+"""
+$(SIGNATURES)
+
+Cumulative average of array along given dimension.
+"""
+cummean(a::AbstractVector) = cumsum(a) ./ (1:length(a))
+cummean(A::AbstractArray; dims) = cumsum(A; dims = dims) ./ (1:size(A, dims))
