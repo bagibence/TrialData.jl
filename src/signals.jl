@@ -119,3 +119,12 @@ function signal_at_t(df, signal, t)
     return transpose(hcat([arr[t, :] for arr in df[!, signal]]...))
 end
 
+"""
+$(SIGNATURES)
+
+Build `n_trials` x `signal_dim` matrix from the mean of the values of
+a signal in the interval `interval` across trials.
+"""
+function mean_signal_in_interval(df, signal, interval::AbstractRange)
+    return vcat([mean(arr[interval, :], dims = 1) for arr in df[!, signal]]...)
+end

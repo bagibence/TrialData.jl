@@ -80,6 +80,7 @@ export
     time_average,
     signal_dimensionality,
     signal_at_t,
+    mean_signal_in_interval,
 
     nanmin,
     nanmax,
