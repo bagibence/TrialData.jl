@@ -116,7 +116,9 @@ export
     split,
     cummean,
 
-    plot
+    plot,
+
+    combine_dataframes
 
 include("constants.jl")
 include("io.jl")
@@ -136,5 +138,6 @@ include("decoding.jl")
 include("stretching.jl")
 include("array_utils.jl")
 include("plotting.jl")
+include("dataframe_transformations.jl")
 
 end # module
