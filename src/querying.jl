@@ -170,17 +170,35 @@ end
 
 
 """
-    balance_conditions(df::AbstractDataFrame, grouping_field)
+    $(SIGNATURES)
 
 Subsample trials from `df` such that it has the same number of trials for each value of `grouping_field`.
+
+If `max_n_trials` is not provided, sample the maximum possible number of trials,
+which is the minimum group length.
+
+If `max_n_trials` is provided, sample `max_n_trials` if it is smaller than the minimum group length,
+otherwise sample the minimum group length.
+
+Returns the subsampled dataframe.
 """
 function balance_conditions(df::AbstractDataFrame, grouping_field)
-    n_to_sample = minimum(collect(values(countmap(df[!, grouping_field]))))
+    min_group_length = minimum(values(countmap(df[!, grouping_field])))
     
-    sampled_df = vcat([sample(g, n_to_sample) for g in groupby(df, grouping_field)]...);
+    return _sample_and_concat(df, grouping_field, min_group_length)
+end
 
-    #@assert (@pipe sampled_df |> groupby(_, grouping_field) |> @combine(_, :n_trials = @nrow) |> _.n_trials |> unique |> length) == 1
+function balance_conditions(df::AbstractDataFrame, grouping_field, max_n_trials)
+    min_group_length = minimum(values(countmap(df[!, grouping_field])))
+    n_to_sample = min(min_group_length, max_n_trials)
+
+    return _sample_and_concat(df, grouping_field, n_to_sample)
+end
+
+function _sample_and_concat(df::AbstractDataFrame, grouping_field, n_to_sample)
+    sampled_df = vcat((sample(g, n_to_sample) for g in groupby(df, grouping_field))...)
+
     @assert length(unique(@combine(groupby(sampled_df, grouping_field), :n_trials = @nrow).n_trials)) == 1
-    
+
     return sampled_df
 end

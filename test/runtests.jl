@@ -1,3 +1,4 @@
 using Test
+using TrialData
 
-@test true
+include("test_balance_conditions.jl")
