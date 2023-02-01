@@ -10,6 +10,10 @@ Get the cross-validation scores through time, trying to classify `out_field` fro
 """
 function get_classif_cv_scores_through_time(df, classifier, input_field, out_field, cv = 10; n_jobs = 1, cum_av = false)
     X_per_trial = permutedims(get_sig_by_trial(df, input_field), (3, 2, 1))
+    # TODO use cummean to avoid the calculation at every timestep and have cleaner code
+    # if cum_av
+    #     X_per_trial = cummean(X_per_trial, dims = 3)
+    # end
     y = df[!, out_field]
     
     T = size(X_per_trial, 3);
@@ -17,11 +21,11 @@ function get_classif_cv_scores_through_time(df, classifier, input_field, out_fie
     cv_scores = []
     for t in 1:T
         if cum_av
-          x = dropdims(mean(X_per_trial[:, :, 1:t],
-                            dims = 3),
-                       dims = 3)
+            x = dropdims(mean(X_per_trial[:, :, 1:t],
+                              dims = 3),
+                         dims = 3)
         else
-          x = X_per_trial[:, :, t]
+            x = X_per_trial[:, :, t]
         end
         push!(cv_scores, model_selection.cross_val_score(classifier, x, y, cv = model_selection.StratifiedKFold(cv, shuffle=true), n_jobs = n_jobs))
     end

@@ -4,7 +4,7 @@ using Interpolations: LinearInterpolation
 """
     stretch(arr::AbstractVector, old_anchors, new_anchors)
 
-Stretch time series by aligning `.old_anchors`. to `new_anchors`. 
+Stretch time series by aligning `old_anchors` to `new_anchors`. 
 """
 function stretch(arr::AbstractVector, old_anchors, new_anchors)
     time = new_anchors[1]:new_anchors[end]
@@ -31,7 +31,7 @@ end
 """
     stretch(arr::AbstractMatrix, old_anchors, new_anchors)
 
-Stretch multiple time series by aligning `.old_anchors`. to `new_anchors`. 
+Stretch multiple time series by aligning `old_anchors` to `new_anchors`. 
 The stretch is applied to each column of the matrix.
 """
 function stretch(arr::AbstractMatrix, old_anchors, new_anchors)
