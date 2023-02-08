@@ -128,8 +128,8 @@ _epoch_start(trial, epoch_fun::Function) = epoch_fun(trial).start
 _epoch_start(trial, epoch) = epoch.start
 
 # I don't know how much sense this makes
-function restrict_to_interval(trial::DataFrameRow, epoch, ref_field)
-    return first(restrict_to_interval(DataFrame(trial), epoch, ref_field))
+function restrict_to_interval(trial::DataFrameRow, epoch, ref_field; drop_warn = true)
+    return first(restrict_to_interval(DataFrame(trial), epoch, ref_field; drop_warn = drop_warn))
 end
 
 function _validate_time_point(tp, T)
@@ -145,12 +145,12 @@ function _validate_time_point(time_points::AbstractArray, T)
 end
 
 
-function restrict_to_interval(df, epoch, ref_field)
+function restrict_to_interval(df, epoch, ref_field; drop_warn = true)
     out_df = deepcopy(df)
     out_df = filter(trial -> _interval_in_trial(trial, epoch, ref_field), out_df)
 
     dropped_ids = Int.(setdiff(df.trial_id, out_df.trial_id))
-    if !isempty(dropped_ids)
+    if drop_warn && !isempty(dropped_ids)
         @warn "Dropped the trials with the following IDs: $(dropped_ids)"
     end
 
@@ -186,12 +186,13 @@ end
 
 
 """
-    restrict_to_interval(df, epoch[, ref_field])
+    $(SIGNATURES)
 
 Restrict dataframe's time varying fields to a given `epoch`.
 `epoch` can be a function or a slice.
+If `drop_warn` is true, a warning is printed if trials are dropped.
 """
-function restrict_to_interval(df, epoch)
+function restrict_to_interval(df, epoch; drop_warn = true)
     ref_field = _ref_time_field(df)
-    return restrict_to_interval(df, epoch, ref_field)
+    return restrict_to_interval(df, epoch, ref_field; drop_warn = drop_warn)
 end
