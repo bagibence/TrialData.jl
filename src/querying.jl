@@ -78,6 +78,17 @@ end
 
 
 """
+$(SIGNATURES)
+
+Get the signal `sig` at time `t` for each trial in `df` and concatenate
+to a matrix of shape `n_trials` x `D` where `D` is the signal dimensionality.
+"""
+function get_sig_at_time(df::AbstractDataFrame, sig, t)
+    return Array(hcat((arr[t, :] for arr in df[!, sig])...)')
+end
+
+
+"""
     expand_in_time(df, field)
 
 "Expand in time" and concatenate a scalar way in a way that the resulting array has the same

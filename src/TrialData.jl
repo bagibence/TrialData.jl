@@ -46,6 +46,7 @@ export
     get_sig,
     stack_trials,
     stack_time_average,
+    get_sig_at_time,
     group_by,
     expand_in_time,
     keep_common_trials,
