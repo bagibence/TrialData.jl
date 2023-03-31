@@ -13,7 +13,7 @@ function stretch(arr::AbstractVector, old_anchors, new_anchors)
     stretched = Vector{Float64}(undef, length(time))
 
     for k in 1:length(new_anchors)-1
-        indtofill = new_anchors[k] .<= time .< new_anchors[k+1]
+        indtofill = new_anchors[k] .<= time .<= new_anchors[k+1]
 
         compress_factor = (old_anchors[k+1] - old_anchors[k]) / (new_anchors[k+1] - new_anchors[k])
 
