@@ -57,6 +57,7 @@ export
     rename_fields,
     subtract_cross_condition_mean,
     trial_average,
+    lendiff,
 
     transform_signal,
     center,
