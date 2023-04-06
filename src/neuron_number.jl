@@ -6,7 +6,7 @@ Sample `n_neurons` neurons from `signal` and write it to `out_signal` in `df`.
 function subsample_neurons!(df::AbstractDataFrame, signal::T, n_neurons::Int, out_signal::T) where T <: Union{String, Symbol}
     sampled_ind = rand(1:signal_dimensionality(df, signal), n_neurons)
 
-    @transform!(df, {out_signal} = {signal}[:, sampled_ind]);
+    @transform!(df, out_signal = {signal}[:, sampled_ind]);
 
     return df
 end
