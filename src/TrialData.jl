@@ -52,6 +52,7 @@ export
     keep_common_trials,
     sample,
     balance_conditions,
+    get_idx_fields,
 
     #select_trials,
     rename_fields,
