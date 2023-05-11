@@ -115,6 +115,8 @@ export
     make_scorer, r2_score, accuracy_score, default_scorer,
 
     stretch,
+    get_ordered_median_time_points,
+    stretch_signal!,
 
     split,
     cummean,
