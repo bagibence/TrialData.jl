@@ -31,10 +31,16 @@ end
     smooth_spikes(pop_spikes, bin_size, hw)
 
 Smooth spikes of a single neuron or a population of neurons with the given smoothing window `.win`.
+The output is the same length as the input, similarly to numpy's mode='same' setting.
 """
 function smooth_spikes(neuron_spikes::AbstractVector, win::AbstractVector)
-    hw = floor(length(win) / 2) |> Int
-    return conv(neuron_spikes, win)[hw+1:end-hw]
+    # copied from https://github.com/JuliaDSP/DSP.jl/pull/403/files/0584fbde6ec0e9a87601a27bc67e5cd454432411#diff-5abb42008ccc969a9672dee0fc50fc9a3ad75f93d843e83a1535993107d6e387R765
+    su = length(neuron_spikes)
+    sv = length(win)
+    start_ind = Int(floor(sv/2 + 1))
+    last_ind = Int(floor(sv/2) + su)
+
+    return conv(neuron_spikes, win)[start_ind:last_ind]
 end
 
 function smooth_spikes(neuron_spikes::AbstractVector, bin_size, hw=DEFAULT_HW)
@@ -43,8 +49,13 @@ function smooth_spikes(neuron_spikes::AbstractVector, bin_size, hw=DEFAULT_HW)
 end
 
 function smooth_spikes(pop_spikes::AbstractMatrix, win::AbstractVector)
-    hw = floor(length(win) / 2) |> Int
-    return conv(pop_spikes, win)[hw+1:end-hw, :]
+    # copied from https://github.com/JuliaDSP/DSP.jl/pull/403/files/0584fbde6ec0e9a87601a27bc67e5cd454432411#diff-5abb42008ccc969a9672dee0fc50fc9a3ad75f93d843e83a1535993107d6e387R765
+    su = size(pop_spikes, 1)
+    sv = length(win)
+    start_ind = Int(floor(sv/2 + 1))
+    last_ind = Int(floor(sv/2) + su)
+
+    return conv(pop_spikes, win)[start_ind:last_ind, :]
 end
 
 function smooth_spikes(pop_spikes::AbstractMatrix, bin_size, hw=DEFAULT_HW)
