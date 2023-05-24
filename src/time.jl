@@ -161,14 +161,21 @@ function restrict_to_interval(df, epoch, ref_field; drop_warn = true)
     idx_fields = get_idx_fields(df)
 
     # convert every index column to allow inserting a missing value
-    allowmissing!(out_df)
+    allowmissing!(out_df, idx_fields)
+    # for the columns where the index is a vector, convert such that the elements
+    # of the vectors can be missing as well
+    for col in idx_fields
+        if eltype(out_df[!, col]) <: Union{Missing, AbstractVector}
+            out_df[!, col] = allowmissing.(out_df[!, col])
+        end
+    end
 
     for trial in eachrow(out_df)
         t0 = _epoch_start(trial, epoch) - 1
         T = get_trial_length(trial, ref_field)
 
         for col in idx_fields
-            if typeof(trial[col]) <: AbstractVector
+            if trial[col] isa AbstractVector
                 trial[col] .-= t0
             else
                 trial[col] -= t0
