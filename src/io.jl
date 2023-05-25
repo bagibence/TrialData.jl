@@ -43,6 +43,8 @@ end
 See [`clean_types`](@ref).
 """
 function clean_types!(df)
+    # NOTE this might be better done by identity or typejoin
+    # see https://stackoverflow.com/questions/74912429/how-to-narrow-element-type-of-a-vector-or-array-in-julia
     for col in names(df)
         dtypes = unique(typeof.(df[!, col]))
         if length(dtypes) == 1
@@ -70,6 +72,35 @@ If all values in a column have the same type, cast all of them into that type.
 function clean_types(df)
     outdf = deepcopy(df)
     return clean_types!(outdf)
+end
+
+"""
+    clean_trial_id!(df::AbstractDataFrame)
+
+If `df` has no :trial_id, adds one. If it has non-unique :trial_id, replaces it with 1,2,3...
+In-place version of [`clean_trial_id`](@ref).
+"""
+function clean_trial_id!(df::AbstractDataFrame)
+    if !hasproperty(df, :trial_id)
+        @warn "Dataframe has no :trial_id. Adding 1,2,3..."
+        df.trial_id = 1:nrow(df)
+    elseif !allunique(df.trial_id)
+        @warn "Dataframe has non-unique :trial_id. Replacing 1,2,3... and saving the original in :orig_trial_id"
+        df.orig_trial_id = df.trial_id
+        df.trial_id = 1:nrow(df)
+    end
+
+    return df
+end
+
+"""
+    clean_trial_id(df::AbstractDataFrame)
+
+If `df` has no :trial_id, adds one. If it has non-unique :trial_id, replaces it with 1,2,3...
+Returns a copy of `df`.
+"""
+function clean_trial_id(df::AbstractDataFrame)
+    return clean_trial_id!(deepcopy(df))
 end
 
 """
@@ -111,7 +142,7 @@ function mat2df(filename, fieldname)
         cleaned_data[key] = vec(trial_data[key])
     end
 
-    return cleaned_data |> DataFrame |> clean_idx_fields! |> replace_nans! |> clean_types!
+    return cleaned_data |> DataFrame |> clean_idx_fields! |> replace_nans! |> clean_trial_id! |> clean_types!
 end
 
 
