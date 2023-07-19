@@ -39,13 +39,16 @@ row_range(arr) = maximum(arr, dims=2) - minimum(arr, dims=2)
 Remove the mean and divide by the column range
 """
 function center_normalize(arr)
-    return (arr .- mean(arr, dims=1)) ./ col_range(arr)
+    divisor = col_range(arr)
+    divisor[divisor .<= eps()] .= 1
+    return (arr .- mean(arr, dims=1)) ./ divisor
 end
 
 function center_normalize(df, fieldname)
     arr = concat_trials(df, fieldname)
     mean_field = mean(arr, dims=1)
     range_field = col_range(arr)
+    range_field[range_field .<= eps()] .= 1
 
     return [(trial[fieldname] .- mean_field) ./ range_field for trial in eachrow(df)]
 end
@@ -58,13 +61,16 @@ end
 Normalize between 0 and 1 by removing the minimum and dividing by the column range
 """
 function zero_normalize(arr)
-    return (arr .- minimum(arr, dims=1)) ./ col_range(arr)
+    divisor = col_range(arr)
+    divisor[divisor .<= eps()] .= 1
+    return (arr .- minimum(arr, dims=1)) ./ divisor
 end
 
 function zero_normalize(df, fieldname)
     arr = concat_trials(df, fieldname)
     min_field = minimum(arr, dims=1)
     range_field = col_range(arr)
+    range_field[range_field .<= eps()] .= 1
 
     return [(trial[fieldname] .- min_field) ./ range_field for trial in eachrow(df)]
 end
