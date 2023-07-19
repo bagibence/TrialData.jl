@@ -75,17 +75,17 @@ function clean_types(df)
 end
 
 """
-    clean_trial_id!(df::AbstractDataFrame)
+    clean_trial_id!(df::AbstractDataFrame; verbose=false)
 
 If `df` has no :trial_id, adds one. If it has non-unique :trial_id, replaces it with 1,2,3...
 In-place version of [`clean_trial_id`](@ref).
 """
-function clean_trial_id!(df::AbstractDataFrame)
+function clean_trial_id!(df::AbstractDataFrame; verbose=false)
     if !hasproperty(df, :trial_id)
-        @warn "Dataframe has no :trial_id. Adding 1,2,3..."
+        verbose && @warn "Dataframe has no :trial_id. Adding 1,2,3..."
         df.trial_id = 1:nrow(df)
     elseif !allunique(df.trial_id)
-        @warn "Dataframe has non-unique :trial_id. Replacing 1,2,3... and saving the original in :orig_trial_id"
+        verbose && @warn "Dataframe has non-unique :trial_id. Replacing 1,2,3... and saving the original in :orig_trial_id"
         df.orig_trial_id = df.trial_id
         df.trial_id = 1:nrow(df)
     end
@@ -94,13 +94,13 @@ function clean_trial_id!(df::AbstractDataFrame)
 end
 
 """
-    clean_trial_id(df::AbstractDataFrame)
+    clean_trial_id(df::AbstractDataFrame; verbose=false)
 
 If `df` has no :trial_id, adds one. If it has non-unique :trial_id, replaces it with 1,2,3...
 Returns a copy of `df`.
 """
-function clean_trial_id(df::AbstractDataFrame)
-    return clean_trial_id!(deepcopy(df))
+function clean_trial_id(df::AbstractDataFrame; verbose=false)
+    return clean_trial_id!(deepcopy(df); verbose = verbose)
 end
 
 """
