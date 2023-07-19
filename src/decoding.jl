@@ -78,7 +78,7 @@ If `cum_av` is true, use a cumulative average of the signal.
 
 Returns an array of coefficients (which are arrays themselves).
 """
-function get_predictive_axis_through_time(df, predictor, input_field, out_field; cum_av = false)
+function get_predictive_axis_through_time(df::AbstractDataFrame, predictor, input_field::Symbol, out_field::Symbol; cum_av::Bool = false)
     X_per_trial = permutedims(get_sig_by_trial(df, input_field), (3, 2, 1))
     y = df[!, out_field]
     
