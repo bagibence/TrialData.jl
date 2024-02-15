@@ -8,30 +8,42 @@ Subsample the elements of the arrays in `array_list` such that the histograms
 of the values in the subsampled arrays is matched across arrays.
 `n_bins` sets how many bins the resulting histogram has.
 
+If `sampling_ratio` is less than 1, then only a fraction of the elements in each bin are sampled.
+
 Return a list of indices that can be used to select the sampled elements, and the
 generated bins of the matched histogram.
 """
-function match_histograms(array_list, n_bins)
+function match_histograms(array_list, n_bins; sampling_ratio = 1)
     n_arrays = length(array_list)
 
+    # Find the minimum and maximum values across all arrays
+    # and create `n_bins` bins between them
     mini = minimum(minimum.(array_list))
     maxi = maximum(maximum.(array_list))
     bins = range(mini, maxi, length = n_bins)
 
-    which_bin_per_array = [searchsortedlast.(Ref(bins), arr) for arr in array_list];
+    which_bin_per_array = [digitize(arr, bins) for arr in array_list];
     linear_indices_per_array = [1:length(bin_ind_i) for bin_ind_i in which_bin_per_array]
 
     sampled_bin_indices = [Int64[] for i in 1:n_arrays]
 
     for i in 1:n_bins
         n_sample = minimum(count.(==(i), which_bin_per_array))
-        indices_in_current_bin_per_array = [lin_ind[bin_ind .== i]
-                                            for (lin_ind, bin_ind)
-                                            in zip(linear_indices_per_array, which_bin_per_array)]
+        if sampling_ratio < 1
+            n_sample = Int64(floor(n_sample * sampling_ratio))
+        end
+
+        indices_in_current_bin_per_array = [
+            lin_ind[bin_ind .== i]
+            for (lin_ind, bin_ind)
+            in zip(linear_indices_per_array, which_bin_per_array)
+        ]
 
         for j in 1:n_arrays
-            push!(sampled_bin_indices[j],
-                  sample(indices_in_current_bin_per_array[j], n_sample, replace=false)...)
+            push!(
+                sampled_bin_indices[j],
+                sample(indices_in_current_bin_per_array[j], n_sample, replace=false)...
+            )
         end
     end
 
@@ -45,12 +57,17 @@ end
 Group `df` based on `grouping_field`, then subsample the rows of each group such that
 the histograms of the values in `matching_field` is matched across groups, using `n_bins` bins.
 
+If `sampling_ratio` is less than 1, then only a fraction of the elements in each bin are sampled.
+
 Return a list of subdataframes and the bin edges used.
 """
-function match_histograms(df::AbstractDataFrame, grouping_field, matching_field, n_bins)
+function match_histograms(df::AbstractDataFrame, grouping_field, matching_field, n_bins; sampling_ratio = 1)
     groups = groupby(df, grouping_field)
-    sampled_indices, bins = match_histograms((subdf[!, matching_field] for subdf in groups),
-                                             n_bins)
+    sampled_indices, bins = match_histograms(
+        (subdf[!, matching_field] for subdf in groups),
+        n_bins;
+        sampling_ratio = sampling_ratio,
+    )
     return [subdf[si, :] for (subdf, si) in zip(groups, sampled_indices)], bins
 end
 
