@@ -40,6 +40,15 @@ function get_trial_length(df::AbstractDataFrame, ref_field)
 end
 
 """
+    get_trial_lengths(df::DataFrame)
+
+Returns a list of the lengths of all trials in the DataFrame.
+"""
+function get_trial_lengths(df::AbstractDataFrame)
+    return get_trial_length.(eachrow(df))
+end
+
+"""
     time_varying_fields(trial::DataFrameRow[, ref_field])
     time_varying_fields(df::AbstractDataFrame[, ref_field])
 

@@ -71,6 +71,7 @@ export
     time_varying_fields,
     restrict_to_interval,
     get_trial_length,
+    get_trial_lengths,
 
     get_average_firing_rates,
     remove_low_firing_neurons,
