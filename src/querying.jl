@@ -126,7 +126,7 @@ end
 ```
 """
 function group_by(df, field)
-    groups = groupby(df, field)
+    groups = DataFrames.groupby(df, field)
     key_tuples = values.(keys(groups))
     return zip([length(k) == 1 ? k[1] : k for k in values.(keys(groups))], [DataFrame(g) for g in groups])
 end

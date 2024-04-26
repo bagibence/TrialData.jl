@@ -17,8 +17,8 @@ using DSP: gaussian, conv
 
 using LinearAlgebra: norm
 
-using DimensionalData
-using NamedDims
+using DimensionalData: DimArray
+using NamedDims: NamedDimsArray
 using AxisKeys
 
 using NearestNeighbors

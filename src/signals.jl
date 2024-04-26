@@ -35,7 +35,7 @@ end
 _col_mean(v) = mean(v)
 
 function trial_average(df, condition)
-    gd = groupby(df, condition)
+    gd = DataFrames.groupby(df, condition)
     
     dd = Dict()
     for col in names(df)
